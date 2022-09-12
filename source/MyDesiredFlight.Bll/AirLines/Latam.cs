@@ -22,18 +22,27 @@ namespace MyDesiredFlight.Bll.AirLines
         public async Task<decimal> SearchFly(string origin, string destination, string dateFrom, string dateTo, string[] options)
         {
             var chromeOptions = new ChromeOptions();
-            chromeOptions.AddArguments("--headless", "--disable-gpu", "--no-sandbox", "--user-agent=Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/73.0.3683.75 Safari/537.36");
+            //windows
+            //chromeOptions.AddArguments("--headless", "--disable-gpu", "--no-sandbox", "--user-agent=Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/73.0.3683.75 Safari/537.36");
+            //linux
+            chromeOptions.AddArguments("--disable-xss-auditor", "--disable-web-security","--disable-blink-features=AutomationControlled", "--headless", "--disable-gpu", "--no-sandbox", "--user-agent=Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.96 Safari/537.36");
+
+
             var service = ChromeDriverService.CreateDefaultService("/usr/bin/", "chromedriver");
             //var service = ChromeDriverService.CreateDefaultService();
 
-            //using (var driver = new ChromeDriver(options: chromeOptions))
-            using (var driver = new ChromeDriver(service: service, options: chromeOptions))
+            using (var driver = new ChromeDriver(options: chromeOptions))
+            //using (var driver = new ChromeDriver(service: service, options: chromeOptions))
             {
                 INavigation nav = driver.Navigate();
 
-                var replacedUrl = "https://www.latamairlines.com/br/pt";
+                var replacedUrl = "https://booking.flytap.com/booking/flights/deeplink?market=BR&language=pt&origin=GRU&destination=VCE&flightType=return&adt=1&chd=0&inf=0&flexibleDates=false&depDate=21.01.2023&retDate=19.02.2023";
                 nav.GoToUrl(replacedUrl);
                 await Task.Delay(5000);
+
+                //var test = driver.FindElement(By.Id("onetrust-accept-btn-handler")).Text;
+                var testtt = driver.FindElement(By.TagName("body")).Text;
+
 
                 replacedUrl = BASE_URL.Replace("{origin}", origin).Replace("{dateTo}", dateTo).Replace("{dateFrom}", dateFrom).Replace("{destination}", destination);
                 //replacedUrl = "https://www.latamairlines.com/br/pt";
@@ -42,10 +51,9 @@ namespace MyDesiredFlight.Bll.AirLines
                 _logger.LogInformation($"Base URL {replacedUrl}");
 
                 _logger.LogInformation("Waiting initial page");
-                await Task.Delay(40000);
-
+                await Task.Delay(30000);
+                var testtt2 = driver.FindElement(By.TagName("body")).Text;
                 _logger.LogInformation("Select country");
-
 
                 IWebElement div;
 
@@ -54,8 +62,7 @@ namespace MyDesiredFlight.Bll.AirLines
 
                     //var testt = driver.FindElement(By.ClassName("sec-text-container"));
 
-                    var test = driver.FindElement(By.TagName("body")).Text;
-                    var testtt = driver.FindElement(By.TagName("body"));
+
 
                     div = driver.FindElement(By.Id("country-suggestion-body-reject-change"));
                     div.Click();
