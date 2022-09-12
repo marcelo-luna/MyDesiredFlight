@@ -1,21 +1,25 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 using MyDesiredFlight.Bll.Interface;
-using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
+using OpenQA.Selenium;
 using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Configuration;
+using OpenQA.Selenium.DevTools;
 
 namespace MyDesiredFlight.Bll.AirLines
 {
-    public class Latam : ISearchFly
+    public class Ita : ISearchFly
     {
         private readonly string BASE_URL;
-        private readonly ILogger<Latam> _logger;
+        private readonly ILogger<Ita> _logger;
 
-        public Latam(IConfiguration configuration, ILogger<Latam> logger)
+        public Ita(IConfiguration configuration, ILogger<Ita> logger)
         {
-            BASE_URL = configuration.GetSection("LATAM_URL").Value;
+            BASE_URL = configuration.GetSection("ITA_URL").Value;
             _logger = logger;
         }
 
@@ -36,36 +40,24 @@ namespace MyDesiredFlight.Bll.AirLines
             //using (var driver = new ChromeDriver(service: service, options: chromeOptions))
             {
                 INavigation nav = driver.Navigate();
+                nav.GoToUrl(BASE_URL);
 
-                var replacedUrl = BASE_URL.Replace("{origin}", origin).Replace("{dateTo}", dateTo).Replace("{dateFrom}", dateFrom).Replace("{destination}", destination);
-                nav.GoToUrl(replacedUrl);
+                IWebElement webElement;
 
-                _logger.LogInformation($"Base URL {replacedUrl}");
 
-                _logger.LogInformation("Waiting initial page");
-                await Task.Delay(30000);
-                var testtt2 = driver.FindElement(By.TagName("body")).Text;
-                _logger.LogInformation("Select country");
+                var originInput = driver.FindElement(By.Id("Origin"));
 
-                IWebElement div;
+                IJavaScriptExecutor js = (IJavaScriptExecutor)driver;
+                js.ExecuteScript("document.getElementById('Origin').setAttribute('value', 'GRU')");
+                js.ExecuteScript("document.getElementById('Destination').setAttribute('value', 'MXP')");
+                js.ExecuteScript("document.getElementById('andata').setAttribute('value', '25/09/2022')");
+                js.ExecuteScript("document.getElementById('ritorno').setAttribute('value', '25/10/2022')");
 
-                div = driver.FindElement(By.Id("country-suggestion-body-reject-change"));
-                div.Click();
+                driver.FindElement(By.Id("cercaVoliSubmit")).Click();
 
-                _logger.LogInformation("Select cookies policy");
-                div = driver.FindElement(By.Id("cookies-politics-button"));
+                //driver.FindElement(By.XPath("//a[@data-details-flight='0']"));
 
-                div.Click();
-
-                _logger.LogInformation("Select first flight");
-                var priceToGo = decimal.Parse(await SelectFirstFlightRow(div, driver));
-
-                _logger.LogInformation("Select second flight");
-                var priceToTurn = decimal.Parse((await SelectFirstFlightRow(div, driver)));
-
-                var total = priceToGo + priceToTurn;
-
-                Console.WriteLine(total);
+                var total = 0;
 
                 return total;
             }

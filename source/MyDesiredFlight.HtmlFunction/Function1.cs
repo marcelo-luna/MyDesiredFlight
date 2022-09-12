@@ -7,16 +7,19 @@ using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using MyDesiredFlight.Bll.Interface;
+using MyDesiredFlight.Bll.AirLines;
 
 namespace MyDesiredFlight.HtmlFunction
 {
     public class Function1
     {
-        public ISearchFly _searchFly;
+        public ISearchFly _latam;
+        public ISearchFly _ita;
 
-        public Function1(ISearchFly searchFly)
+        public Function1(ISearchFly latam, ISearchFly ita)
         {
-            _searchFly = searchFly;
+            _latam = latam;
+            _ita = ita;
         }
 
         [FunctionName("Function1")]
@@ -26,13 +29,14 @@ namespace MyDesiredFlight.HtmlFunction
         {
             log.LogInformation("C# HTTP trigger function processed a request.");
 
-            var latam = _searchFly.SearchFly(origin, destination, dateFrom, dateTo);
+            //var latam = _latam.SearchFly(origin, destination, dateFrom, dateTo);
+            var ita = _ita.SearchFly(origin, destination, dateFrom, dateTo);
 
-            await Task.WhenAll(latam);
+            await Task.WhenAll(ita);
 
-            string responseMessage = $"Price Latam {latam.Result}";
+            string responseMessage = $"Price ita {ita.Result}";
 
             return new OkObjectResult(responseMessage);
         }
-    }
+    }   
 }

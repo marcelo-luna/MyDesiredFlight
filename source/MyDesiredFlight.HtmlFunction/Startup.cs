@@ -15,6 +15,7 @@ namespace MyDesiredFlight.HtmlFunction
             builder.Services.AddLogging();
 
             builder.Services.AddSingleton<ISearchFly, Latam>();
+            builder.Services.AddSingleton<ISearchFly, Ita>();
 
             //builder.Services.AddSingleton(new Function1(builder.Services.BuildServiceProvider().GetRequiredService<ISearchFly>()));
         }
