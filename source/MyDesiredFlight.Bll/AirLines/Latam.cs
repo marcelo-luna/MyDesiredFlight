@@ -50,35 +50,7 @@ namespace MyDesiredFlight.Bll.AirLines
 
                 div = driver.FindElement(By.Id("country-suggestion-body-reject-change"));
                 div.Click();
-
-                    //var testt = driver.FindElement(By.ClassName("sec-text-container"));
-
-
-
-                    div = driver.FindElement(By.Id("country-suggestion-body-reject-change"));
-                    div.Click();
-
-
-                }
-                catch (Exception)
-                {
-                    div = driver.FindElement(By.Id("country-suggestion-dialog-close"));
-                    div.Click();
-
-                    //var testt = driver.FindElement(By.ClassName("sec-text-container"));
-
-
-
-                    div = driver.FindElement(By.Id("country-suggestion-body-reject-change"));
-                    div.Click();
-
-
-                }
-                catch (Exception)
-                {
-                    div = driver.FindElement(By.Id("country-suggestion-dialog-close"));
-                    div.Click();
-
+                
                 _logger.LogInformation("Select cookies policy");
                 div = driver.FindElement(By.Id("cookies-politics-button"));
 

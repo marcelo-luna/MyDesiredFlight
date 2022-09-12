@@ -16,7 +16,7 @@ namespace MyDesiredFlight.HtmlFunction
         public ISearchFly _latam;
         public ISearchFly _ita;
 
-        public Function1(ISearchFly latam, ISearchFly ita)
+        public Function1(Latam latam, Ita ita)
         {
             _latam = latam;
             _ita = ita;
@@ -29,12 +29,12 @@ namespace MyDesiredFlight.HtmlFunction
         {
             log.LogInformation("C# HTTP trigger function processed a request.");
 
-            //var latam = _latam.SearchFly(origin, destination, dateFrom, dateTo);
-            var ita = _ita.SearchFly(origin, destination, dateFrom, dateTo);
+            var latam = _latam.SearchFly(origin, destination, dateFrom, dateTo);
+            //var ita = _ita.SearchFly(origin, destination, dateFrom, dateTo);
 
-            await Task.WhenAll(ita);
+            await Task.WhenAll(latam);
 
-            string responseMessage = $"Price ita {ita.Result}";
+            string responseMessage = $"Price ita {latam.Result}";
 
             return new OkObjectResult(responseMessage);
         }
